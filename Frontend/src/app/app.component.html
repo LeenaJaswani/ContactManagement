@@ -1,0 +1,189 @@
+<div class="container-fluid">
+
+	<div class="row" >
+    
+		<div id="contactlist" class="col-sm-5 left">
+	
+      <h1>List of Contacts</h1>
+
+          
+
+           
+
+            <a  href="#demo" class="btn btn-info new" (click)="showForm()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+  <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+  <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+</svg><!-- <i class="bi bi-person-plus"></i> --></a>
+<div>
+           <p class="length">{{contacts.length}} Contacts</p></div>
+           <input [(ngModel)]="searchText" placeholder="Search.." class="advancedSearchTextbox"> 
+          <ul>
+            <li class="list" *ngFor="let contact of contacts| filter: {Name: searchText, ContactNumber:searchText, EmailAddress:searchText} | paginate : {itemsPerPage: pageSize,currentPage: page}" >
+
+              <a class="colorcontact"  href="#contactdetails" (click)="contactClicked(contact)" >
+                <img class="imagebullet" width="25" height="25" src="https://avatars.dicebear.com/v2/avataaars/{{contact.Name}}.svg?mouth[]=smile"/>{{contact.Name}}</a>
+
+            </li>
+          </ul>
+
+             <pagination-controls class="page" previousLabel="Prev" nextLabel="Next" responsive="true" 
+                (pageChange)="handlePageChange($event)">
+                 </pagination-controls>
+       
+    </div>
+
+  <div id="details" class="col-sm-7 right">
+   
+    <div id="demo"  *ngIf="showAddform">
+        
+
+         <form class="form-group" id="addform"  #newContactForm="ngForm" novalidate>
+                  <h3>Add New Contact</h3> 
+          <label class="col-sm-2 col-form-label" > Name:</label> 
+          <div  class="col-sm-10">
+            <input  class="form-control" [(ngModel)]="newContact.Name" required name="name" type="text"[class.is-invalid]="Name.invalid && Name.touched"  #Name="ngModel" >
+            <small class="text-danger" [class.d-none]="Name.valid || Name.untouched" >Name is required</small>
+        </div>
+
+          <label class="col-sm-2 col-form-label"> EmailAddress:</label> 
+          <div class="col-sm-10">
+            <input required name="EmailAddress" class="form-control"  type="email" [(ngModel)]="newContact.EmailAddress" #EmailAddress="ngModel" [class.is-invalid]="EmailAddress.invalid && EmailAddress.touched" pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,7}"/>
+            <div *ngIf="EmailAddress.errors &&(EmailAddress.valid || EmailAddress.touched)" >
+              <small class="text-danger"*ngIf="EmailAddress.errors.required" >Email id is required </small>
+              <small *ngIf="EmailAddress.errors.pattern">Email must be in valid format(e.g. johndoe@gmail.com)</small>
+            </div>
+           </div>
+        <label class="col-sm-2 col-form-label"> HomeAddress:</label>
+        <div class="col-sm-10">
+          <input name="HomeAddress" class="form-control" type="text" [(ngModel)]="newContact.HomeAddress"/> 
+        </div>
+
+         <label class="col-sm-2 col-form-label" > ContactNumber:</label>
+         <div class="col-sm-10">
+          <input required name="ContactNumber" class="form-control"  type="number"  [(ngModel)]="newContact.ContactNumber" #ContactNumber="ngModel" pattern="^\d{9,15}$" [class.is-invalid]="ContactNumber.invalid && ContactNumber.touched" >
+            <div *ngIf="ContactNumber.errors &&(ContactNumber.valid || ContactNumber.touched)" >
+              <small class="text-danger" *ngIf="ContactNumber.errors.required">Contact Number is required </small>
+              <small *ngIf="ContactNumber.errors.pattern">Contact Number must be 9-15 digits</small>
+            </div>
+         </div>
+
+         <label class="col-sm-2 col-form-label"> Birthday:</label>
+         <div class="col-sm-10">
+          <input name="Birthday" class="form-control" type="date"  [(ngModel)]="newContact.Birthday"/>
+         </div>
+
+         <label class="col-sm-2 col-form-label"class="col-sm-2 col-form-label">Nickname:</label>
+         <div class="col-sm-10">
+          <input class="form-control" name="Nickname" type="text" [(ngModel)]="newContact.Nickname"/>
+         </div>
+  <div class="button">
+         <p class="button">
+          <button *ngIf="newContact.id == -1" [disabled]="newContactForm.form.invalid"  data-target="#demo" data-toggle="collapse" class="btn btn-light btn-outline-primary" (click)="addContact();newContactForm.reset();" ng-message="Added Successfully"> Add 
+          </button>
+        </p>
+      </div>
+           
+        </form>
+
+
+          
+  </div>
+
+      <div class="crud" id="contactdetails"*ngIf="!hidedeletedContact">
+        <div  class="details" *ngIf="!isEditEnable && this.selectedContact.id != -1">
+          <ul class="showdetails">
+            <li class="showdetails">
+                <div class="detailsimage" *ngIf="!isEditEnable  && this.selectedContact.id != -1" >
+                  <img  width="200" height="200" src="https://avatars.dicebear.com/v2/avataaars/{{selectedContact.Name}}.svg?mouth[]=smile">
+                </div>
+            </li>
+
+             <li>
+              <label class="detailslabel" >Name:<p class="detailslist">{{selectedContact.Name}}</p></label>
+             </li>
+
+             <li>
+              <label class="detailslabel"> EmailAddress: <p class="detailslist">{{selectedContact.EmailAddress}}</p> </label>
+             </li>
+
+              <li>
+                <label class="detailslabel"> HomeAddress:<p class="detailslist">{{selectedContact.HomeAddress}}</p></label>
+              </li>
+
+              <li>
+                <label class="detailslabel"> ContactNumber:<p class="detailslist">{{selectedContact.ContactNumber}}</p></label> 
+              </li>
+
+              <li>
+                <label class="detailslabel">Birthday:<p class="detailslist">{{selectedContact.Birthday}}</p></label>
+              </li>
+
+              <li>
+                <label class="detailslabel"> Nickname:<p class="detailslist">{{selectedContact.Nickname}}</p></label>
+              </li>
+
+               <button  class="btn btn-light btn-outline-primary"  *ngIf="!isEditEnable && this.selectedContact.id != -1" (click)="updateContact()">
+               <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+              </svg>  </button>   
+               <button *ngIf="this.selectedContact.id != -1 && !hidedeletedContact" class="btn btn-light btn-outline-primary" (click)="deleteContact(contact)">  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+         </svg>
+         </button>
+          </ul> 
+        </div> 
+
+      <div class="showdetails"   *ngIf="isEditEnable" >
+
+        <div *ngIf="isEditEnable && this.selectedContact.id != -1 " >
+         
+         <img class="detailsimage" width="200" height="200" src="https://avatars.dicebear.com/v2/avataaars/{{selectedContact.Name}}.svg">
+        </div>
+
+          <label class="col-sm-2 col-form-label" > Name:</label>
+             <input required type="text" class="form-control " [(ngModel)]="selectedContact.Name "#uName="ngModel" [class.is-invalid]="uName.invalid && uName.touched"/>
+              <small class="text-danger" [class.d-none]="uName.valid || uName.untouched" >Name is required</small>
+
+          <label class="col-sm-2 col-form-label" >EmailAddress </label> 
+            <input required  type="email"  class="form-control " [(ngModel)]="selectedContact.EmailAddress" #uEmailAddress="ngModel" [class.is-invalid]="uEmailAddress.invalid && uEmailAddress.touched" pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,7}"/>
+            <div *ngIf="uEmailAddress.errors &&(uEmailAddress.valid || uEmailAddress.touched)" >
+             <small class="text-danger"*ngIf="uEmailAddress.errors.required" >Email id is required </small>
+              <small *ngIf="uEmailAddress.errors.pattern">Email must be in valid format(e.g. johndoe@gmail.com)</small>
+            </div>
+
+          <label class="col-sm-2 col-form-label" > HomeAddress:</label>
+            <input type="text"  class="form-control" [(ngModel)]="selectedContact.HomeAddress"/> 
+
+          <label class="col-sm-2 col-form-label" > ContactNumber:</label>
+            <input required type="number"  pattern="^\d{9,15}$"  class="form-control" [(ngModel)]="selectedContact.ContactNumber"#uContactNumber="ngModel" pattern="^\d{9,15}$" [class.is-invalid]="uContactNumber.invalid && uContactNumber.touched" >
+            <div *ngIf="uContactNumber.errors &&(uContactNumber.valid || uContactNumber.touched)" >
+             <small class="text-danger" *ngIf="uContactNumber.errors.required">Contact Number is required </small>
+             <small *ngIf="uContactNumber.errors.pattern">Contact Number must be 9-15 digits</small>
+            </div>
+
+           <label class="col-sm-2 col-form-label" >Birthday:</label>
+            <input type="date"   class="form-control" [(ngModel)]="selectedContact.Birthday"/>
+
+            <label class="col-sm-2 col-form-label" >Nickname: </label>
+             <input type="text" class="form-control" [(ngModel)]="selectedContact.Nickname"/>
+               
+              <div class="button">
+        
+      </div> 
+           <button *ngIf="selectedContact.id != -1 && isEditEnable " [disabled]="uName.errors?.required||uEmailAddress.errors?.required||uContactNumber.errors?.required||uContactNumber.errors?.pattern||uEmailAddress.errors?.pattern" class="btn btn-light btn-outline-primary"  (click)="updateContact()"> Update </button>
+             <button *ngIf="this.selectedContact.id != -1 && !hidedeletedContact" class="btn btn-light btn-outline-primary" (click)="deleteContact(contact)">  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+         </svg>
+         </button>
+
+          
+     </div>
+</div>
+      
+      <a href="#contactlist" class="scrollup btn btn-info"><span class="glyphicon glyphicon-circle-arrow-up"></span></a>  
+
+  </div>
+
+</div>
+
+</div>
