@@ -1,7 +1,7 @@
 data.sql
 # .env
-Backend/src/__pycache__/
-Backend/src/*.pyc
+__pycache__/
+*.pyc
 static/
 staticfiles/
 
