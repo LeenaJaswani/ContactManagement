@@ -1,0 +1,8 @@
+data.sql
+# .env
+Backend/src/__pycache__/
+Backend/src/*.pyc
+static/
+staticfiles/
+
+
